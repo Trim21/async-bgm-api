@@ -1,11 +1,8 @@
 # Async Bgm.tv API Client
 
 [![Build Status](https://dev.azure.com/trim21/async-bgm-api/_apis/build/status/Trim21.async-bgm-api?branchName=master)](https://dev.azure.com/trim21/async-bgm-api/_build/latest?definitionId=4&branchName=master)
-
 [![](https://img.shields.io/pypi/v/async-bgm-api.svg)](https://pypi.python.org/pypi/async-bgm-api)
-
 [![](https://img.shields.io/codecov/c/github/Trim21/async-bgm-api/master.svg)](https://codecov.io/gh/Trim21/async-bgm-api)
-
 [![](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/Trim21/async-bgm-api/blob/master/LICENSE)
 
 ```bash
