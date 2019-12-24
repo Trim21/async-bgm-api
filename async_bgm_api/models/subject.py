@@ -61,38 +61,34 @@ class CharacterImage(BaseModel):
 
 
 class MonoAlias(BaseModel):
-    jp: str
-    kana: str
-    romaji: str
-    zh: str
+    jp: str = None
+    kana: str = None
+    romaji: str = None
+    zh: str = None
 
 
 class MonoInfo(BaseModel):
-    birth: str
-
-    height: str
-
-    gender: str
-
-    alias: MonoAlias
-    source: Union[str, List[str]]
+    birth: str = None
+    height: str = None
+    gender: str = None
+    alias: MonoAlias = None
+    source: Union[str, List[str]] = None
     name_cn: str
-
-    cv: str
+    cv: str = None
 
 
 class MonoBase(BaseModel):
     id: int
     url: str
     name: str
-    images: CharacterImage
+    images: CharacterImage = None
 
 
 class Character(BaseModel):
     id: int
     url: str
     name: str
-    images: CharacterImage
+    images: CharacterImage = None
     name_cn: str
     comment: int
     collects: int
@@ -105,7 +101,7 @@ class Staff(BaseModel):
     id: int
     url: str
     name: str
-    images: CharacterImage
+    images: CharacterImage = None
     name_cn: str
     comment: int
     collects: int
