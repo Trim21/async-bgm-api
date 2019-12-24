@@ -13,12 +13,6 @@ jobs:
 
 
     steps:
-      - task: DockerCompose@0
-        displayName: Setup Containers
-        inputs:
-          action: Run services
-          dockerComposeFile: '$(Build.Repository.LocalPath)/.ci/composes/docker-compose.yaml'
-
       - template: /.ci/templates/steps/install-project.yaml
         parameters:
           python_version: $(python.version)
