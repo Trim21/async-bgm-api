@@ -1,4 +1,4 @@
-from typing import List, Optional, Union
+from typing import List, Union
 
 import httpx
 from httpx.models import HeaderTypes, QueryParamTypes, URLTypes
@@ -50,7 +50,7 @@ class BgmApi:
                 raise RecordNotFound(request=response.request, response=response)
         return data
 
-    async def get_user_info(self, user_id: UserID) -> Optional[UserInfo]:
+    async def get_user_info(self, user_id: UserID) -> UserInfo:
         """
         https://bangumi.github.io/api/#/用户/get_user__username_
 

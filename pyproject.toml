@@ -8,8 +8,8 @@ license = "MIT"
 [tool.poetry.dependencies]
 python = "^3.6.1"
 
-pydantic = '1.2'
-httpx = "^0.9.5"
+pydantic = '^1.2'
+httpx = "0.9.5"
 
 [tool.poetry.dev-dependencies]
 black = {version = "^19.10b0", allow-prereleases = true}
