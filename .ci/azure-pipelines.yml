@@ -23,6 +23,6 @@ stages:
   - stage: Test
     jobs:
       - template: ./templates/jobs/test-app.yaml
-#  - stage: Build
-#    jobs:
-#      - template: ./templates/jobs/build-docs.yaml
+  - stage: Build
+    jobs:
+      - template: ./templates/jobs/build-docs.yaml

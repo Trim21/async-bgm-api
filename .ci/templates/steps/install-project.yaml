@@ -23,9 +23,9 @@ steps:
     displayName: Cache pip
 
   - bash: |
-      poetry export --format requirements.txt --dev > requirements.txt
+      poetry export --format requirements.txt --dev -E docs > requirements.txt
       pip install --user --no-deps -q -r requirements.txt
-      poetry install
+      poetry install -E docs
     displayName: Install Packages
     env:
       POETRY_VIRTUALENVS_CREATE: 'false'

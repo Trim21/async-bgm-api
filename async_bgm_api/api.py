@@ -8,6 +8,7 @@ from async_bgm_api.models import (
     Calendar,
     CollectionCat,
     SubjectSmall,
+    SubjectWithEps,
     UserCollection,
     UserInfo,
 )
@@ -20,6 +21,10 @@ UserID = Union[str, int]
 
 class BgmApi:
     def __init__(self, mirror=False):
+        """
+
+        :param mirror: if use mirror ``mirror.api.bgm.rin.cat``
+        """
         if mirror:
             self.host = "mirror.api.bgm.rin.cat"
         else:
@@ -52,7 +57,7 @@ class BgmApi:
 
     async def get_user_info(self, user_id: UserID) -> UserInfo:
         """
-        https://bangumi.github.io/api/#/用户/get_user__username_
+        `<https://bangumi.github.io/api/#/用户/get_user__username_>`_
 
         :param user_id:
         :return:
@@ -65,7 +70,7 @@ class BgmApi:
         self, user_id: UserID, cat: CollectionCat,
     ) -> List[UserCollection]:
         """
-        https://bangumi.github.io/api/#/用户/get_user__username__collection
+        `<https://bangumi.github.io/api/#/用户/get_user__username__collection>`_
 
         :param user_id:
         :param cat: ``watching`` or ``all_watching``
@@ -86,13 +91,18 @@ class BgmApi:
         return [Calendar.parse_obj(x) for x in data]
 
     async def get_subject_small(self, subject_id: int) -> SubjectSmall:
+        """get subject info with response group small
+
+        :param subject_id:
+        :return:
+        """
         r = await self.get(f"/subject/{subject_id}", params={"responseGroup": "small"})
         data = self.json(r)
         return SubjectSmall.parse_obj(data)
 
     async def get_subject_media(self, subject_id: int) -> SubjectMedia:
-        """
-        ``medium`` should be typo
+        """get subject info with response group ``medium``,
+        ``medium`` should be typo I guess.
 
         :param subject_id:
         :return:
@@ -102,6 +112,32 @@ class BgmApi:
         return SubjectMedia.parse_obj(data)
 
     async def get_subject_large(self, subject_id: int) -> SubjectLarge:
+        """
+        get subject info with response group large
+
+        :param subject_id:
+        :return:
+        """
         r = await self.get(f"/subject/{subject_id}", params={"responseGroup": "large"})
         data = self.json(r)
         return SubjectLarge.parse_obj(data)
+
+    async def get_subject_with_eps(self, subject_id: int) -> SubjectWithEps:
+        """
+        `<https://bangumi.github.io/api/#/条目/get_subject__subject_id__ep>`_
+
+        :param subject_id:
+        :return:
+        """
+        r = await self.get(f"/subject/{subject_id}/ep")
+        data = self.json(r)
+        return SubjectWithEps.parse_obj(data)
+
+    async def close(self):
+        await self.session.close()
+
+    async def __aenter__(self) -> "BgmApi":
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        await self.close()
