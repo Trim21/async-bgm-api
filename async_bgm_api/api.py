@@ -20,11 +20,11 @@ UserID = Union[str, int]
 
 
 class BgmApi:
-    def __init__(self, mirror=False):
-        """
+    """
+    :param mirror: if use mirror ``mirror.api.bgm.rin.cat``
+    """
 
-        :param mirror: if use mirror ``mirror.api.bgm.rin.cat``
-        """
+    def __init__(self, mirror=False):
         if mirror:
             self.host = "mirror.api.bgm.rin.cat"
         else:
@@ -60,7 +60,6 @@ class BgmApi:
         `<https://bangumi.github.io/api/#/用户/get_user__username_>`_
 
         :param user_id:
-        :return:
         """
         req = await self.get(f"/user/{user_id}")
         data = self.json(req)
@@ -74,7 +73,6 @@ class BgmApi:
 
         :param user_id:
         :param cat: ``watching`` or ``all_watching``
-        :return:
         """
         req = await self.get(f"/user/{user_id}/collection", params={"cat": cat},)
         data = self.json(req)
@@ -94,7 +92,7 @@ class BgmApi:
         """get subject info with response group small
 
         :param subject_id:
-        :return:
+
         """
         r = await self.get(f"/subject/{subject_id}", params={"responseGroup": "small"})
         data = self.json(r)
@@ -105,7 +103,7 @@ class BgmApi:
         ``medium`` should be typo I guess.
 
         :param subject_id:
-        :return:
+
         """
         r = await self.get(f"/subject/{subject_id}", params={"responseGroup": "medium"})
         data = self.json(r)
@@ -116,7 +114,6 @@ class BgmApi:
         get subject info with response group large
 
         :param subject_id:
-        :return:
         """
         r = await self.get(f"/subject/{subject_id}", params={"responseGroup": "large"})
         data = self.json(r)
@@ -127,7 +124,6 @@ class BgmApi:
         `<https://bangumi.github.io/api/#/条目/get_subject__subject_id__ep>`_
 
         :param subject_id:
-        :return:
         """
         r = await self.get(f"/subject/{subject_id}/ep")
         data = self.json(r)

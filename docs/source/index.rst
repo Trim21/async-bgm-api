@@ -16,6 +16,10 @@ Asyncio Bgm.tv api client
 
     from async_bgm_api import BgmApi
 
+    mirror_client = BgmApi(mirror=True)
+
+    async def main():
+        user = await mirror_client.get_user_info("trim21")
 
 .. toctree::
 
