@@ -20,11 +20,11 @@ class CollectionStatusId(int, Enum):
 
 
 class CollectionStatusType(str, Enum):
-    wish = 'wish'
-    collect = 'collect'
-    do = 'do'
-    on_hold = 'on_hold'
-    dropped = 'dropped'
+    wish = "wish"
+    collect = "collect"
+    do = "do"
+    on_hold = "on_hold"
+    dropped = "dropped"
 
 
 class EpisodeType(Enum):
@@ -40,9 +40,9 @@ class EpisodeType(Enum):
 
 
 class StatusEnum(Enum):
-    Air = 'Air'
-    Today = 'Today'
-    NA = 'NA'
+    Air = "Air"
+    Today = "Today"
+    NA = "NA"
 
 
 class Episode(BaseModel):
@@ -108,7 +108,7 @@ class RefreshResponse(BaseModel):
     access_token: str
     expires_in: int
     token_type: str
-    scope: Optional[str] = ''
+    scope: Optional[str] = ""
     refresh_token: str
 
 
@@ -142,8 +142,8 @@ class UserCollection(BaseModel):
 
 
 class CollectionCat(str, Enum):
-    watching = 'watching'
-    all_watching = 'all_watching'
+    watching = "watching"
+    all_watching = "all_watching"
 
 
 class Weekday(BaseModel):

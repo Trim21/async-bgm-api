@@ -4,14 +4,14 @@ from async_bgm_api import BgmApi
 from async_bgm_api.exceptions import RecordNotFound
 from async_bgm_api.models import CollectionCat, UserCollection, UserInfo
 
-non_exists_user_id = 'non_exists_user_id'
+non_exists_user_id = "non_exists_user_id"
 
 
 @pytest.mark.asyncio
 async def test_get_user_200(api_mirror: BgmApi):
     r = await api_mirror.get_user_info(3)
     assert isinstance(r, UserInfo)
-    await api_mirror.get_user_info('sunyanzi')
+    await api_mirror.get_user_info("sunyanzi")
 
 
 @pytest.mark.asyncio
