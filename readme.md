@@ -1,5 +1,9 @@
 # Async Bgm.tv API Client
 
+```bash
+pip install async_bgm_api
+```
+
 ```python
 import asyncio
 from async_bgm_api import BgmApi
