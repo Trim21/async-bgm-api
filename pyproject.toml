@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "async_bgm_api"
+version = "0.0.1"
+description = ""
+authors = ["Trim21 <i@trim21.me>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.6.1"
+
+pydantic = '1.2'
+httpx = "^0.9.5"
+
+[tool.poetry.dev-dependencies]
+black = {version = "^19.10b0", allow-prereleases = true}
+pytest = "^5.3.2"
+pytest-asyncio = "^0.10.0"
+coverage = "^5.0.1"
+pre-commit = "^1.20.0"
+isort = "^4.3.21"
+autoflake = "^1.3.1"
+
+[tool.isort]
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+line_length = 88
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"

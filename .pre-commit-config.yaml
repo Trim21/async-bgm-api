@@ -1,0 +1,73 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.4.0
+    hooks:
+      - id: check-case-conflict
+      - id: check-ast
+      - id: check-builtin-literals
+      - id: check-byte-order-marker
+      - id: check-toml
+      - id: check-yaml
+      - id: check-json
+      - id: check-docstring-first
+      - id: check-merge-conflict
+      - id: check-added-large-files
+      - id: debug-statements
+      - id: trailing-whitespace
+      - id: debug-statements
+      - id: mixed-line-ending
+        args: [--fix=lf]
+      - id: pretty-format-json
+        args:
+          - --no-ensure-ascii
+          - --no-sort-keys
+          - --indent
+          - '2'
+          - --autofix
+      # check for file bigger than 500kb
+      - id: end-of-file-fixer
+      - id: double-quote-string-fixer
+      - id: fix-encoding-pragma
+        args: [--remove]
+
+  - repo: https://github.com/Trim21/find-trailing-comma
+    rev: v0.0.1
+    hooks:
+      - id: find-trailing-comma
+
+
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v1.25.2
+    hooks:
+      - id: pyupgrade
+        args: ['--py36-plus',]
+
+  - repo: https://github.com/PyCQA/doc8
+    rev: 0.8.1rc2
+    hooks:
+      - id: doc8
+        args: [ '--max-line-length', '88', '--file-encoding', 'utf-8' ]
+
+#  - repo: https://github.com/pre-commit/mirrors-mypy
+#    rev: '0.750'  # Use the sha / tag you want to point at
+#    hooks:
+#      - id: mypy
+
+  - repo: local
+    hooks:
+      - id: isort
+        name: isort
+        entry: isort
+        require_serial: true
+        language: system
+        types: [python]
+
+      - id: autoflake
+        name: autoflake
+        entry: autoflake
+        require_serial: true
+        language: system
+        types: [python]
+        args: ['--in-place',
+               '--remove-unused-variables',
+               '--remove-all-unused-imports']

@@ -1,0 +1,36 @@
+jobs:
+  - job: 'App'
+    pool:
+      vmImage: 'ubuntu-16.04' # other options: 'macOS-10.13', 'vs2017-win2016'
+    strategy:
+      matrix:
+        Python36:
+          python.version: '3.6'
+        Python37:
+          python.version: '3.7'
+        Python38:
+          python.version: '3.8'
+
+
+    steps:
+      - task: DockerCompose@0
+        displayName: Setup Containers
+        inputs:
+          action: Run services
+          dockerComposeFile: '$(Build.Repository.LocalPath)/.ci/composes/docker-compose.yaml'
+
+      - template: /.ci/templates/steps/install-project.yaml
+        parameters:
+          python_version: $(python.version)
+
+
+      - script: coverage run -m pytest --junitxml=junit/test_report.xml
+        displayName: Unittest
+
+      - task: PublishTestResults@2
+        condition: succeededOrFailed()
+        inputs:
+          testResultsFiles: 'junit/test_*.xml'
+          testRunTitle: 'Publish test results for Python $(python.version)'
+
+      - template: /.ci/templates/steps/codecov.yaml
