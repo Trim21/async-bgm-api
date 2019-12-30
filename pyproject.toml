@@ -9,7 +9,7 @@ license = "MIT"
 python = "^3.6.1"
 
 pydantic = '^1.2'
-httpx = "0.9.5"
+httpx = "0.9.* || 0.10.*"
 sphinx = {version = "^2.3.1", optional = true}
 sphinx_rtd_theme =  { version = '0.4.3', optional = true }
 
