@@ -1,11 +1,11 @@
-import httpx
+import aiohttp
 
 
 class ServerConnectionError(Exception):
     def __init__(
         self,
-        request: httpx.Request = None,
-        response: httpx.Response = None,
+        request: aiohttp.RequestInfo = None,
+        response: aiohttp.ClientResponse = None,
         raw_exception: Exception = None,
     ):
         self.request = request
@@ -16,8 +16,8 @@ class ServerConnectionError(Exception):
 class RecordNotFound(Exception):
     def __init__(
         self,
-        request: httpx.Request = None,
-        response: httpx.Response = None,
+        request: aiohttp.RequestInfo = None,
+        response: aiohttp.ClientResponse = None,
         raw_exception: Exception = None,
     ):
         self.request = request

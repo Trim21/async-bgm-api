@@ -4,10 +4,16 @@ from async_bgm_api import BgmApi
 
 
 @pytest.fixture
-def api():
-    yield BgmApi()
+@pytest.mark.asyncio
+async def api():
+    api = BgmApi()
+    yield api
+    await api.close()
 
 
 @pytest.fixture
-def api_mirror():
-    yield BgmApi(mirror=True)
+@pytest.mark.asyncio
+async def api_mirror():
+    api = BgmApi(mirror=True)
+    yield api
+    await api.close()

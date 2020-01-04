@@ -1,7 +1,8 @@
+import urllib
+import urllib.parse
 from typing import List, Union
 
-import httpx
-from httpx.models import HeaderTypes, QueryParamTypes, URLTypes
+import aiohttp
 
 from async_bgm_api.exceptions import RecordNotFound, ServerConnectionError
 from async_bgm_api.models import (
@@ -14,7 +15,7 @@ from async_bgm_api.models import (
 )
 from async_bgm_api.models.subject import SubjectLarge, SubjectMedia
 
-REQUEST_SERVICE_USER_AGENT = "async-bgm-api (0.0.1)"
+REQUEST_SERVICE_USER_AGENT = "async-bgm-api"
 
 UserID = Union[str, int]
 
@@ -29,30 +30,34 @@ class BgmApi:
             self.host = "mirror.api.bgm.rin.cat"
         else:
             self.host = "api.bgm.tv"
+        self.base_url = f"https://{self.host}/"
 
-        self.session = httpx.Client(
-            base_url=f"https://{self.host}/",
-            headers={"user-agent": REQUEST_SERVICE_USER_AGENT},
-        )
+        self.session = None
+
+    def url(self, path):
+        return urllib.parse.urljoin(self.base_url, path)
 
     async def get(
-        self,
-        url: URLTypes,
-        *,
-        params: QueryParamTypes = None,
-        headers: HeaderTypes = None,
+        self, url, *, params=None, headers=None,
     ):
+        if not self.session:
+            self.session = aiohttp.ClientSession(
+                headers={"user-agent": REQUEST_SERVICE_USER_AGENT},
+            )
         try:
-            return await self.session.get(url, params=params, headers=headers)
-        except (httpx.TimeoutException, ConnectionError) as e:
+            async with self.session.get(
+                self.url(url), params=params, headers=headers,
+            ) as resp:
+                return await self.json(resp)
+        except aiohttp.ClientConnectionError as e:
             raise ServerConnectionError(raw_exception=e)
 
     @staticmethod
-    def json(response: httpx.Response):
-        data = response.json()
+    async def json(response: aiohttp.ClientResponse):
+        data = await response.json()
         if "error" in data:
             if data["code"] == 404:
-                raise RecordNotFound(request=response.request, response=response)
+                raise RecordNotFound(request=response.request_info, response=response)
         return data
 
     async def get_user_info(self, user_id: UserID) -> UserInfo:
@@ -61,8 +66,7 @@ class BgmApi:
 
         :param user_id:
         """
-        req = await self.get(f"/user/{user_id}")
-        data = self.json(req)
+        data = await self.get(f"/user/{user_id}")
         return UserInfo.parse_obj(data)
 
     async def get_user_collection(
@@ -74,18 +78,15 @@ class BgmApi:
         :param user_id:
         :param cat: ``watching`` or ``all_watching``
         """
-        req = await self.get(f"/user/{user_id}/collection", params={"cat": cat},)
-        data = self.json(req)
+        data = await self.get(f"/user/{user_id}/collection", params={"cat": cat},)
         return [UserCollection.parse_obj(x) for x in data]
 
     async def get_user_watching_subjects(self, user_id: UserID) -> List[UserCollection]:
-        r = await self.get(f"/user/{user_id}/collection", params={"cat": "watching"})
-        data = self.json(r)
+        data = await self.get(f"/user/{user_id}/collection", params={"cat": "watching"})
         return [UserCollection.parse_obj(x) for x in data]
 
     async def get_calendar(self) -> List[Calendar]:
-        r = await self.get("/calendar")
-        data = self.json(r)
+        data = await self.get("/calendar")
         return [Calendar.parse_obj(x) for x in data]
 
     async def get_subject_small(self, subject_id: int) -> SubjectSmall:
@@ -94,8 +95,9 @@ class BgmApi:
         :param subject_id:
 
         """
-        r = await self.get(f"/subject/{subject_id}", params={"responseGroup": "small"})
-        data = self.json(r)
+        data = await self.get(
+            f"/subject/{subject_id}", params={"responseGroup": "small"}
+        )
         return SubjectSmall.parse_obj(data)
 
     async def get_subject_media(self, subject_id: int) -> SubjectMedia:
@@ -105,8 +107,9 @@ class BgmApi:
         :param subject_id:
 
         """
-        r = await self.get(f"/subject/{subject_id}", params={"responseGroup": "medium"})
-        data = self.json(r)
+        data = await self.get(
+            f"/subject/{subject_id}", params={"responseGroup": "medium"}
+        )
         return SubjectMedia.parse_obj(data)
 
     async def get_subject_large(self, subject_id: int) -> SubjectLarge:
@@ -115,8 +118,9 @@ class BgmApi:
 
         :param subject_id:
         """
-        r = await self.get(f"/subject/{subject_id}", params={"responseGroup": "large"})
-        data = self.json(r)
+        data = await self.get(
+            f"/subject/{subject_id}", params={"responseGroup": "large"}
+        )
         return SubjectLarge.parse_obj(data)
 
     async def get_subject_with_eps(self, subject_id: int) -> SubjectWithEps:
@@ -125,8 +129,7 @@ class BgmApi:
 
         :param subject_id:
         """
-        r = await self.get(f"/subject/{subject_id}/ep")
-        data = self.json(r)
+        data = await self.get(f"/subject/{subject_id}/ep")
         return SubjectWithEps.parse_obj(data)
 
     async def close(self):
