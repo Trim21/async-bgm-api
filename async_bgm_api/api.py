@@ -32,18 +32,22 @@ class BgmApi:
             self.host = "api.bgm.tv"
         self.base_url = f"https://{self.host}/"
 
-        self.session = None
+        self._session = None
 
     def url(self, path):
         return urllib.parse.urljoin(self.base_url, path)
 
+    @property
+    def session(self):
+        if not self._session:
+            self._session = aiohttp.ClientSession(
+                headers={"user-agent": REQUEST_SERVICE_USER_AGENT},
+            )
+        return self._session
+
     async def get(
         self, url, *, params=None, headers=None,
     ):
-        if not self.session:
-            self.session = aiohttp.ClientSession(
-                headers={"user-agent": REQUEST_SERVICE_USER_AGENT},
-            )
         try:
             async with self.session.get(
                 self.url(url), params=params, headers=headers,
@@ -53,11 +57,17 @@ class BgmApi:
             raise ServerConnectionError(raw_exception=e)
 
     @staticmethod
-    async def json(response: aiohttp.ClientResponse):
-        data = await response.json()
+    def _raise_if_404(data) -> bool:
         if "error" in data:
             if data["code"] == 404:
-                raise RecordNotFound(request=response.request_info, response=response)
+                return True
+        return False
+
+    @classmethod
+    async def json(cls, resp: aiohttp.ClientResponse):
+        data = await resp.json()
+        if cls._raise_if_404(data):
+            raise RecordNotFound(request=resp.request_info, response=resp)
         return data
 
     async def get_user_info(self, user_id: UserID) -> UserInfo:
@@ -78,12 +88,18 @@ class BgmApi:
         :param user_id:
         :param cat: ``watching`` or ``all_watching``
         """
-        data = await self.get(f"/user/{user_id}/collection", params={"cat": cat},)
-        return [UserCollection.parse_obj(x) for x in data]
-
-    async def get_user_watching_subjects(self, user_id: UserID) -> List[UserCollection]:
-        data = await self.get(f"/user/{user_id}/collection", params={"cat": "watching"})
-        return [UserCollection.parse_obj(x) for x in data]
+        try:
+            async with self.session.get(
+                self.url(f"/user/{user_id}/collection"), params={"cat": cat},
+            ) as resp:
+                data = await resp.json()
+                if data is None:
+                    return []
+                if self._raise_if_404(data):
+                    raise RecordNotFound(request=resp.request_info, response=resp)
+                return [UserCollection.parse_obj(x) for x in data]
+        except aiohttp.ClientConnectionError as e:
+            raise ServerConnectionError(raw_exception=e)
 
     async def get_calendar(self) -> List[Calendar]:
         data = await self.get("/calendar")

@@ -6,6 +6,8 @@ from async_bgm_api.models import CollectionCat, UserCollection, UserInfo
 
 non_exists_user_id = "non_exists_user_id"
 
+no_collection_user_id = "23"
+
 
 @pytest.mark.asyncio
 async def test_get_user_200(api_mirror: BgmApi):
@@ -34,3 +36,11 @@ async def test_get_user_collection_404(api_mirror: BgmApi):
         await api_mirror.get_user_collection(
             non_exists_user_id, cat=CollectionCat.watching
         )
+
+
+@pytest.mark.asyncio
+async def test_get_user_collection_user_exist_no_collection_200(api_mirror: BgmApi):
+    d = await api_mirror.get_user_collection(
+        no_collection_user_id, cat=CollectionCat.watching
+    )
+    assert len(d) == 0
